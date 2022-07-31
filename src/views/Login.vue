@@ -47,6 +47,7 @@
               x-large
               color="primary"
               class="mt-5"
+              @click="submit"
             >ENTRAR</v-btn>
 
           </v-form>
@@ -57,6 +58,8 @@
 </template>
 
 <script>
+  import Cookie from "js-cookie";
+
   export default {
     name: 'Login',
 
@@ -78,10 +81,32 @@
       ],
     }),
 
+    // created() {
+    //   Cookie.remove("token);
+    // },
 
     methods: {
-      validate () {
-        this.$refs.form.validate()
+      submit () {
+        if (this.$refs.form.validate()) {
+          const payload = { email: this.email, password: this.password };
+
+          fetch(`http://localhost:8000/api/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Access": "application/json",
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(response => response.json())
+          .then(res => {
+            if ([400].includes(res.code)) {            
+              console.log("Erro de autenticação: ", res);
+            } else {
+              Cookie.set("token", res.access_token);
+            }
+          });
+        }
       },
     },
   }
