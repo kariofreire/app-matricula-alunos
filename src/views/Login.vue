@@ -5,6 +5,7 @@
       max-width="550"
       elevation="10"
       outlined
+      dark
     >
       <v-responsive :aspect-ratio="16/9">
         <v-card-text
@@ -45,6 +46,7 @@
               block
               large
               x-large
+              outlined
               color="primary"
               class="mt-5"
               @click="submit"
