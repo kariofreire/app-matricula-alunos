@@ -81,9 +81,9 @@
       ],
     }),
 
-    // created() {
-    //   Cookie.remove("token);
-    // },
+    created() {
+      if (Cookie.get("token")) this.$router.push('/');
+    },
 
     methods: {
       submit () {
@@ -104,6 +104,7 @@
               console.log("Erro de autenticação: ", res);
             } else {
               Cookie.set("token", res.access_token);
+              this.$router.push('/');
             }
           });
         }
