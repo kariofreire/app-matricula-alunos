@@ -1,0 +1,19 @@
+version: '3'
+
+networks:
+  app-matricula-alunos-network:
+    driver: bridge
+
+services:
+  matricula-alunos-app:
+    build: .
+    container_name: app-matricula-alunos
+    working_dir: /app
+    restart: always
+    networks:
+      - app-matricula-alunos-network
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    command: ['yarn', 'serve']
