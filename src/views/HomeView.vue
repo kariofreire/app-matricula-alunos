@@ -16,6 +16,7 @@
           outlined
           rounded
           text
+          @click="toogleStatusCadastrarAluno"
         >
           Novo Aluno
         </v-btn>
@@ -85,20 +86,29 @@
       @fechar="toogleStatusDetalhesAluno"
     />
 
+    <CadastrarAluno
+      :dialog="statusCadastroAluno"
+      :dados-cursos="dadosCurso"
+      @dados="getRetornoCadastroAluno($event)"
+      @fechar="toogleStatusCadastrarAluno"
+      @cadastrar="toogleStatusCadastrarAluno"
+    />
   </div>
 </template>
 
 <script>
+  import Cookie from 'js-cookie';
   import NavBar from '@/components/NavBar';
   import DetalhesAluno from '@/components/DetalhesAluno';
-  import Cookie from 'js-cookie';
+  import CadastrarAluno from '@/components/CadastrarAluno';
   
   export default {
     name: 'Home',
 
     components: {
       NavBar,
-      DetalhesAluno
+      DetalhesAluno,
+      CadastrarAluno
     },
 
     data() {
@@ -106,12 +116,15 @@
         alunos: [],
         token: Cookie.get("token"),
         dadosAluno: {},
+        dadosCurso: [],
         statusDetalhesAluno: false,
+        statusCadastroAluno: false,
       }
     },
 
     created() {
-      this.getAlunos()
+      this.getAlunos(),
+      this.getCursos()
     },
 
     methods: {
@@ -134,6 +147,25 @@
         });
       },
 
+      getCursos() {
+        fetch(`http://localhost:8000/api/cursos`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Access": "application/json",
+            "Authorization": `Bearer ${this.token}`
+          },
+        })
+        .then(response => response.json())
+        .then(res => {
+          if ([200].includes(res.code)) {
+            this.dadosCurso = res.data;
+          } else {
+            console.log('Error: ', res);
+          }
+        });
+      },
+
       detalhesAluno(aluno) {
         this.dadosAluno = aluno;
         this.statusDetalhesAluno = true;
@@ -145,6 +177,33 @@
 
       getRetornoModal(dados) {
         console.log("Retorno: ", dados);
+      },
+
+      getRetornoCadastroAluno(dados) {
+        if ([undefined].includes(dados.nome)) return false;
+
+        fetch(`http://localhost:8000/api/alunos`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Access": "application/json",
+            "Authorization": `Bearer ${this.token}`
+          },
+          body: JSON.stringify(dados)
+        })
+        .then(response => response.json())
+        .then(res => {
+          if ([200].includes(res.code)) {
+            this.getAlunos();
+            this.getCursos();
+          } else {
+            console.log('Error: ', res);
+          }
+        });
+      },
+
+      toogleStatusCadastrarAluno() {
+        this.statusCadastroAluno = !this.statusCadastroAluno;
       },
     },
   }
