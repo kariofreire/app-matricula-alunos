@@ -75,7 +75,6 @@ export default {
 
   methods: {
     fechar() {
-      this.$emit("dados", { ...{ data: this.dadosAluno } });
       this.$emit("fechar");
     },
   },

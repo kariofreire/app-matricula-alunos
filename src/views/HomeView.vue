@@ -82,7 +82,6 @@
     <DetalhesAluno
       :dadosAluno="dadosAluno"
       :dialog="statusDetalhesAluno"
-      @dados="getRetornoModal($event)"
       @fechar="toogleStatusDetalhesAluno"
     />
 
@@ -173,10 +172,6 @@
 
       toogleStatusDetalhesAluno() {
         this.statusDetalhesAluno = !this.statusDetalhesAluno;
-      },
-
-      getRetornoModal(dados) {
-        console.log("Retorno: ", dados);
       },
 
       getRetornoCadastroAluno(dados) {
