@@ -29,7 +29,7 @@
             <v-spacer></v-spacer>
 
             <v-list-item-subtitle class="text--primary">
-              {{ dadosAluno.curso.titulo + ` - ` + dadosAluno.curso.descricao }}
+              {{ dadosAluno?.curso?.titulo + ` - ` + dadosAluno?.curso?.descricao }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
