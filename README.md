@@ -3,4 +3,3 @@
 # Foram utilizados neste projeto
 - Vutify
 - Vue Router
-- Axios
