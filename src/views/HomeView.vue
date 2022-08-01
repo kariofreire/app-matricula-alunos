@@ -60,6 +60,7 @@
                     fab
                     x-small
                     color="primary"
+                    @click="getAluno(item.id)"
                   >
                     <v-icon>$vuetify.icons.edit</v-icon>
                   </v-btn>
@@ -100,6 +101,14 @@
       @fechar="toogleStatusCadastrarAluno"
       @cadastrar="toogleStatusCadastrarAluno"
     />
+
+    <EditarAluno 
+      :dialog="statusEditarAluno"
+      :dados-cursos="dadosCurso"
+      :dados-aluno="dadosAluno"
+      @dados="getRetornoEditaAluno($event)"
+      @fechar="toogleStatusEditarAluno"
+    />
   </div>
 </template>
 
@@ -109,6 +118,7 @@
   import DetalhesAluno from '@/components/DetalhesAluno';
   import CadastrarAluno from '@/components/CadastrarAluno';
   import DeletarAluno from '@/components/DeletarAluno';
+  import EditarAluno from '@/components/EditarAluno';
   
   export default {
     name: 'Home',
@@ -117,7 +127,8 @@
       NavBar,
       DetalhesAluno,
       CadastrarAluno,
-      DeletarAluno
+      DeletarAluno,
+      EditarAluno
     },
 
     data() {
@@ -127,9 +138,11 @@
         dadosAluno: {},
         dadosCurso: [],
         idAlunoDeletar: null,
+        idAlunoEditar: null,
         statusDetalhesAluno: false,
         statusCadastroAluno: false,
         statusDeletarAluno: false,
+        statusEditarAluno: false
       }
     },
 
@@ -171,6 +184,27 @@
         .then(res => {
           if ([200].includes(res.code)) {
             this.dadosCurso = res.data;
+          } else {
+            console.log('Error: ', res);
+          }
+        });
+      },
+
+      getAluno(idAluno) {
+        const alunoDados = fetch(`http://localhost:8000/api/alunos/${idAluno}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Access": "application/json",
+            "Authorization": `Bearer ${this.token}`
+          },
+        })
+        .then(response => response.json())
+        .then(res => {
+          if ([200].includes(res.code)) {
+            this.dadosAluno = res.data;
+
+            this.toogleStatusEditarAluno();
           } else {
             console.log('Error: ', res);
           }
@@ -239,6 +273,14 @@
       toogleStatusExcluirAluno(idAlunoDeletar = null) {
         this.idAlunoDeletar = idAlunoDeletar;
         this.statusDeletarAluno = !this.statusDeletarAluno;
+      },
+
+      getRetornoEditaAluno(dados) {
+        console.log("Editar: ", dados);
+      },
+
+      toogleStatusEditarAluno() {
+        this.statusEditarAluno = !this.statusEditarAluno;
       },
     },
   }
