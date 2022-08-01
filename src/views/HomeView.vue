@@ -69,6 +69,7 @@
                     fab
                     x-small
                     color="error"
+                    @click="toogleStatusExcluirAluno(item.id)"
                   >
                     <v-icon>$vuetify.icons.delete</v-icon>
                   </v-btn>
@@ -83,6 +84,13 @@
       :dadosAluno="dadosAluno"
       :dialog="statusDetalhesAluno"
       @fechar="toogleStatusDetalhesAluno"
+    />
+
+    <DeletarAluno
+      :id-aluno="idAlunoDeletar"
+      :dialog="statusDeletarAluno"
+      @dados="getRetornoIdAlunoExcluido($event)"
+      @fechar="toogleStatusExcluirAluno"
     />
 
     <CadastrarAluno
@@ -100,6 +108,7 @@
   import NavBar from '@/components/NavBar';
   import DetalhesAluno from '@/components/DetalhesAluno';
   import CadastrarAluno from '@/components/CadastrarAluno';
+  import DeletarAluno from '@/components/DeletarAluno';
   
   export default {
     name: 'Home',
@@ -107,7 +116,8 @@
     components: {
       NavBar,
       DetalhesAluno,
-      CadastrarAluno
+      CadastrarAluno,
+      DeletarAluno
     },
 
     data() {
@@ -116,8 +126,10 @@
         token: Cookie.get("token"),
         dadosAluno: {},
         dadosCurso: [],
+        idAlunoDeletar: null,
         statusDetalhesAluno: false,
         statusCadastroAluno: false,
+        statusDeletarAluno: false,
       }
     },
 
@@ -199,6 +211,34 @@
 
       toogleStatusCadastrarAluno() {
         this.statusCadastroAluno = !this.statusCadastroAluno;
+      },
+
+      getRetornoIdAlunoExcluido(dados) {
+        if (dados.dados === null) return false;
+
+        fetch(`http://localhost:8000/api/alunos/${dados.dados}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Access": "application/json",
+            "Authorization": `Bearer ${this.token}`
+          },
+          body: JSON.stringify(dados)
+        })
+        .then(response => response.json())
+        .then(res => {
+          if ([200].includes(res.code)) {
+            this.getAlunos();
+            this.getCursos();
+          } else {
+            console.log('Error: ', res);
+          }
+        });
+      },
+
+      toogleStatusExcluirAluno(idAlunoDeletar = null) {
+        this.idAlunoDeletar = idAlunoDeletar;
+        this.statusDeletarAluno = !this.statusDeletarAluno;
       },
     },
   }
