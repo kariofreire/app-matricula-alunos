@@ -21,6 +21,9 @@
 
     # Starta o docker
     $ docker-compose up -d --build
+
+    # Para entrar no container
+    $ docker exec -it app-matricula-alunos /bin/sh
 ```
 
 #### Por fim o projeto estará sendo executado em:
