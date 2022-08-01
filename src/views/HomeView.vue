@@ -49,6 +49,7 @@
                     class="mx-2"
                     fab
                     x-small
+                    @click="detalhesAluno(item)"
                   >
                     <v-icon>$vuetify.icons.info</v-icon>
                   </v-btn>
@@ -68,7 +69,7 @@
                     x-small
                     color="error"
                   >
-                    <v-icon>mdi-delete</v-icon>
+                    <v-icon>$vuetify.icons.delete</v-icon>
                   </v-btn>
               </td>
             </tr>
@@ -76,11 +77,20 @@
         </v-simple-table>
       </v-card-text>
     </v-card>
+
+    <DetalhesAluno
+      :dadosAluno="dadosAluno"
+      :dialog="statusDetalhesAluno"
+      @dados="getRetornoModal($event)"
+      @fechar="toogleStatusDetalhesAluno"
+    />
+
   </div>
 </template>
 
 <script>
   import NavBar from '@/components/NavBar';
+  import DetalhesAluno from '@/components/DetalhesAluno';
   import Cookie from 'js-cookie';
   
   export default {
@@ -88,12 +98,15 @@
 
     components: {
       NavBar,
+      DetalhesAluno
     },
 
     data() {
       return {
         alunos: [],
-        token: Cookie.get("token")
+        token: Cookie.get("token"),
+        dadosAluno: {},
+        statusDetalhesAluno: false,
       }
     },
 
@@ -116,10 +129,23 @@
           if ([200].includes(res.code)) {
             this.alunos = res.data.data;
           } else {
-            console.log('error');
+            console.log('Error: ', res);
           }
         });
-      }
+      },
+
+      detalhesAluno(aluno) {
+        this.dadosAluno = aluno;
+        this.statusDetalhesAluno = true;
+      },
+
+      toogleStatusDetalhesAluno() {
+        this.statusDetalhesAluno = !this.statusDetalhesAluno;
+      },
+
+      getRetornoModal(dados) {
+        console.log("Retorno: ", dados);
+      },
     },
   }
 </script>
